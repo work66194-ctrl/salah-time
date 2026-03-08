@@ -22,7 +22,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-bottom">
-                <p>Built with <Heart size={14} className="heart-icon" /> for the community.</p>
+                <p>Build by abdarrehmaan</p>
                 <p className="copyright">© {new Date().getFullYear()} Salah Time. All rights reserved.</p>
             </div>
         </footer>
