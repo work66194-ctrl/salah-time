@@ -350,3 +350,95 @@ button {
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* =============================================
+   FOOTER STYLES
+   ============================================= */
+.footer-container {
+  background: var(--surface-color);
+  border-top: 1px solid var(--border-color);
+  padding: 40px 20px 20px;
+  margin-top: auto;
+  /* Push to bottom if content is short */
+  position: relative;
+  z-index: 10;
+}
+
+.footer-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+@media (min-width: 768px) {
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.footer-info h3 {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.footer-info p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.footer-links h4 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.footer-links ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.footer-links a:hover {
+  color: var(--primary-color);
+}
+
+.footer-bottom {
+  max-width: 1000px;
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.heart-icon {
+  color: #EF4444;
+  /* Red color for heart */
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 4px;
+}

@@ -27,6 +27,43 @@
     margin-top: 4px;
 }
 
+.quranVerse {
+    text-align: center;
+    margin: 0 auto 30px;
+    max-width: 600px;
+    padding: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.arabicText {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    line-height: 1.6;
+    font-weight: 600;
+    font-family: Amiri, "Times New Roman", serif;
+    /* Optional: standard Arabic fallback */
+}
+
+.translationText {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.referenceText {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
 .topSection {
     display: grid;
     grid-template-columns: 1fr;

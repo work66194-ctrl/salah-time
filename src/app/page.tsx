@@ -97,6 +97,13 @@ export default function Home() {
         <p className={styles.dateSubtitle}>{format(currentTime, 'EEEE, d MMMM yyyy')}</p>
       </header>
 
+      {/* Hadith */}
+      <div className={styles.quranVerse}>
+        <p className={styles.arabicText} dir="rtl">أَوَّلُ مَا يُحَاسَبُ بِهِ الْعَبْدُ يَوْمَ الْقِيَامَةِ الصَّلَاةُ</p>
+        <p className={styles.translationText}>&quot;The first matter that the slave will be brought to account for on the Day of Judgment is the prayer.&quot;</p>
+        <p className={styles.referenceText}>— Prophet Muhammad (ﷺ)<br />Sunan al-Tirmidhi</p>
+      </div>
+
       {/* Desktop Grid Layout */}
       <div className={styles.topSection}>
         {/* Countdown Card */}

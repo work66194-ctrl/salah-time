@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import TopNav from "@/components/TopNav";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const outfit = Outfit({ subsets: ["latin"], display: "swap" });
@@ -42,6 +43,7 @@ export default function RootLayout({
         <div className="app-container">
           {children}
         </div>
+        <Footer />
       </body>
     </html>
   );
