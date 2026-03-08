@@ -1,0 +1,177 @@
+.container {
+    padding: 0;
+    animation: fadeIn 0.4s ease-out;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mapHeader {
+    height: 300px;
+    width: 100%;
+    position: relative;
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.headerContent {
+    padding: 24px 20px;
+    background: var(--bg-color);
+    border-radius: 24px 24px 0 0;
+    margin-top: -24px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.address {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.facilitiesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.facilityBadge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 12px;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+.facilityBadge svg {
+    color: var(--primary-color);
+}
+
+.section {
+    margin-bottom: 24px;
+    padding: 0 20px;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timetable {
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: rgba(4, 122, 85, 0.05);
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 16px;
+    border-bottom: 1px dashed var(--border-color);
+    align-items: center;
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.prayerName {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.timeCol {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+}
+
+.iqamahCol {
+    font-variant-numeric: tabular-nums;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Jumuah and Ramadan Cards */
+.specialCard {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(217, 119, 6, 0.15));
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.specialCard h3 {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.specialRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(217, 119, 6, 0.2);
+}
+
+.specialRow:last-child {
+    border-bottom: none;
+}
+
+.backBtn {
+    position: absolute;
+    top: 90px;
+    left: 24px;
+    z-index: 100;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary);
+    cursor: pointer;
+}
