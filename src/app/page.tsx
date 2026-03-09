@@ -48,24 +48,21 @@ export default function Home() {
 
   const [standardTimes, setStandardTimes] = useState<PrayerRow[]>([]);
   const [hanafiTimes, setHanafiTimes] = useState<PrayerRow[]>([]);
-  const [shiaTimes, setShiaTimes] = useState<PrayerRow[]>([]);
   const [hijriDateStr, setHijriDateStr] = useState<string>('');
-  const [school, setSchool] = useState<'standard' | 'hanafi' | 'shia'>('standard');
+  const [school, setSchool] = useState<'standard' | 'hanafi'>('standard');
   const [loading, setLoading] = useState(true);
 
-  const cityTimes = school === 'hanafi' ? hanafiTimes : school === 'shia' ? shiaTimes : standardTimes;
+  const cityTimes = school === 'hanafi' ? hanafiTimes : standardTimes;
 
-  // Fetch standard, Hanafi, and Shia times in parallel
+  // Fetch standard and Hanafi times in parallel
   useEffect(() => {
     Promise.all([
       fetchTimes(5, 0),   // Umm Al-Qura, Shafi
       fetchTimes(5, 1),   // Umm Al-Qura, Hanafi
-      fetchTimes(0, 0),   // Shia Ithna Ashari
     ])
-      .then(([std, han, shia]) => {
+      .then(([std, han]) => {
         setStandardTimes(std.prayers);
         setHanafiTimes(han.prayers);
-        setShiaTimes(shia.prayers);
         setHijriDateStr(std.hijriDate);
       })
       .catch(console.error)
@@ -168,13 +165,6 @@ export default function Home() {
                 title="Hanafi (Asr: shadow = 2×)"
               >
                 Hanafi
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${school === 'shia' ? styles.toggleActive : ''}`}
-                onClick={() => setSchool('shia')}
-                title="Shia Ithna Ashari method"
-              >
-                Shia
               </button>
             </div>
           </div>
