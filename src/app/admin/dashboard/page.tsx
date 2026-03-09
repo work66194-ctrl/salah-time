@@ -238,7 +238,7 @@ export default function AdminDashboard() {
         has_wudu_area: 'Wudu Area',
         has_womens_area: "Women's Area",
         has_ac: 'AC',
-        has_wheelchair_access: 'Wheelchair',
+        has_wheelchair_access: 'Chair',
         has_parking: 'Parking',
         has_library: 'Library',
     };
@@ -366,7 +366,7 @@ export default function AdminDashboard() {
                                 <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_wudu_area} onChange={() => toggleFacility('has_wudu_area')} /> Wudu Area</label>
                                 <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_womens_area} onChange={() => toggleFacility('has_womens_area')} /> Women's Area</label>
                                 <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_ac} onChange={() => toggleFacility('has_ac')} /> Air Conditioning</label>
-                                <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_wheelchair_access} onChange={() => toggleFacility('has_wheelchair_access')} /> Wheelchair Access</label>
+                                <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_wheelchair_access} onChange={() => toggleFacility('has_wheelchair_access')} /> Chair Access</label>
                                 <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_parking} onChange={() => toggleFacility('has_parking')} /> Parking</label>
                                 <label className={styles.checkboxLabel}><input type="checkbox" checked={facilities.has_library} onChange={() => toggleFacility('has_library')} /> Library</label>
                             </div>

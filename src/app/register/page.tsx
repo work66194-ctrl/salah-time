@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, MapPin, Building, Droplets, Wind, ParkingCircle, Accessibility, Users, BookOpen, Link as LinkIcon } from 'lucide-react';
 import { submitMosqueRegistration } from '../actions/registerMosque';
+import { resolveShortUrl } from '../actions/resolveUrl';
 
 export default function RegisterMosque() {
     const router = useRouter();
@@ -12,12 +13,27 @@ export default function RegisterMosque() {
     const [success, setSuccess] = useState(false);
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
+    const [isResolvingLink, setIsResolvingLink] = useState(false);
 
-    const handleMapLinkPaste = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleMapLinkPaste = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const url = e.target.value;
-        const matchAt = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-        const matchQ = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
-        const matchPlace = url.match(/place\/.*\/@?(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (!url) return;
+
+        // If it's a shortened goo.gl link, we need to resolve it first
+        let finalUrl = url;
+        // If it's a shortened goo.gl link, we need to resolve it first via server action to bypass CORS
+        if (url.includes('goo.gl') || url.includes('maps.app.goo.gl')) {
+            setIsResolvingLink(true);
+            const res = await resolveShortUrl(url);
+            if (res.success && res.url) {
+                finalUrl = res.url;
+            }
+            setIsResolvingLink(false);
+        }
+
+        const matchAt = finalUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+        const matchQ = finalUrl.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+        const matchPlace = finalUrl.match(/place\/.*\/@?(-?\d+\.\d+),(-?\d+\.\d+)/);
 
         const match = matchAt || matchQ || matchPlace;
         if (match) {
@@ -105,11 +121,32 @@ export default function RegisterMosque() {
                     <hr style={{ border: 'none', borderTop: '1px dashed var(--border-color)', margin: '8px 0' }} />
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px' }}>Google Maps Link (Recommended)</label>
+                        <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px' }}>Google Maps Link *</label>
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '8px', lineHeight: 1.4 }}>Paste a Google Maps link to automatically fill the exact coordinates.</p>
                         <div style={{ position: 'relative' }}>
                             <LinkIcon size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                            <input type="url" placeholder="https://www.google.com/maps/..." onChange={handleMapLinkPaste} style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '12px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)' }} />
+                            <input
+                                type="url"
+                                name="google_maps_link"
+                                required
+                                placeholder="https://www.google.com/maps/..."
+                                onChange={handleMapLinkPaste}
+                                style={{
+                                    width: '100%',
+                                    padding: '12px 12px 12px 40px',
+                                    borderRadius: '12px',
+                                    border: '1px solid var(--border-color)',
+                                    outline: 'none',
+                                    background: 'var(--bg-color)',
+                                    opacity: isResolvingLink ? 0.6 : 1
+                                }}
+                                disabled={isResolvingLink}
+                            />
+                            {isResolvingLink && (
+                                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: 600 }}>
+                                    Resolving...
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -144,7 +181,7 @@ export default function RegisterMosque() {
                             </label>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontSize: '0.95rem' }}>
                                 <input type="checkbox" name="wheelchair" style={{ width: '18px', height: '18px', accentColor: 'var(--primary-color)' }} />
-                                <Accessibility size={18} color="var(--primary-color)" /> Wheelchair
+                                <Accessibility size={18} color="var(--primary-color)" /> Chair
                             </label>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontSize: '0.95rem' }}>
                                 <input type="checkbox" name="parking" style={{ width: '18px', height: '18px', accentColor: 'var(--primary-color)' }} />

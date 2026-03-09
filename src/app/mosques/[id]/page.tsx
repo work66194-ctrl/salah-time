@@ -104,7 +104,7 @@ export default function MosqueDetail({ params }: { params: Promise<{ id: string 
                     {mosque.facilities?.has_womens_area && <div className={styles.facilityBadge}><Users size={16} /> Women's Area</div>}
                     {mosque.facilities?.has_ac && <div className={styles.facilityBadge}><Wind size={16} /> AC</div>}
                     {mosque.facilities?.has_parking && <div className={styles.facilityBadge}><ParkingCircle size={16} /> Parking</div>}
-                    {mosque.facilities?.has_wheelchair_access && <div className={styles.facilityBadge}><Accessibility size={16} /> Wheelchair</div>}
+                    {mosque.facilities?.has_wheelchair_access && <div className={styles.facilityBadge}><Accessibility size={16} /> Chair</div>}
                     {mosque.facilities?.has_library && <div className={styles.facilityBadge}><BookOpen size={16} /> Library</div>}
                 </div>
             </div>

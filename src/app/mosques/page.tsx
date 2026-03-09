@@ -121,7 +121,7 @@ export default function MosqueDirectory() {
                                             {mosque.facilities.has_wudu_area && <span title="Wudu Available"><Droplets size={16} /></span>}
                                             {mosque.facilities.has_ac && <span title="Air Conditioned"><Wind size={16} /></span>}
                                             {mosque.facilities.has_parking && <span title="Parking"><ParkingCircle size={16} /></span>}
-                                            {mosque.facilities.has_wheelchair_access && <span title="Wheelchair Accessible"><Accessibility size={16} /></span>}
+                                            {mosque.facilities.has_wheelchair_access && <span title="Chair Accessible"><Accessibility size={16} /></span>}
                                         </div>
                                     </div>
 
