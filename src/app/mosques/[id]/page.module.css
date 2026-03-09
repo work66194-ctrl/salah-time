@@ -40,6 +40,42 @@
     margin-bottom: 20px;
 }
 
+.actionRow {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.actionBtn:hover {
+    background: var(--bg-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.actionBtn svg {
+    color: var(--primary-color);
+}
+
 .facilitiesGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));

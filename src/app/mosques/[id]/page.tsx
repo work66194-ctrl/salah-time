@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { ChevronLeft, MapPin, Droplets, Wind, ParkingCircle, Accessibility, Users, BookOpen, Clock, Calendar, Moon, Edit2, X, CheckCircle } from 'lucide-react';
+import { ChevronLeft, MapPin, Droplets, Wind, ParkingCircle, Accessibility, Users, BookOpen, Clock, Calendar, Moon, Edit2, X, CheckCircle, Navigation, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { format12Hour } from '@/lib/utils';
 import { submitTimeSuggestion } from '@/app/actions/suggestTime';
@@ -43,6 +43,32 @@ export default function MosqueDetail({ params }: { params: Promise<{ id: string 
         } else {
             alert('Failed to submit suggestion: ' + res.error);
         }
+    };
+
+    const handleShare = async () => {
+        const shareData = {
+            title: `${mosque.name} - Salah Time`,
+            text: `View prayer timings and details for ${mosque.name} in ${mosque.area || 'our directory'}.`,
+            url: window.location.href,
+        };
+
+        if (navigator.share && navigator.canShare(shareData)) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        } else {
+            // Fallback for desktop/unsupported browsers
+            navigator.clipboard.writeText(window.location.href);
+            alert('Link copied to clipboard!');
+        }
+    };
+
+    const handleDirections = () => {
+        if (!mosque.latitude || !mosque.longitude) return;
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mosque.latitude},${mosque.longitude}`;
+        window.open(mapsUrl, '_blank');
     };
 
     useEffect(() => {
@@ -96,6 +122,18 @@ export default function MosqueDetail({ params }: { params: Promise<{ id: string 
                 <div className={styles.address}>
                     <MapPin size={18} style={{ flexShrink: 0, marginTop: 2, color: 'var(--primary-color)' }} />
                     <span>{mosque.address}</span>
+                </div>
+
+                {/* Quick Actions */}
+                <div className={styles.actionRow}>
+                    <button onClick={handleDirections} className={styles.actionBtn} aria-label="Get Directions via Google Maps">
+                        <Navigation size={18} />
+                        Directions
+                    </button>
+                    <button onClick={handleShare} className={styles.actionBtn} aria-label="Share Link">
+                        <Share2 size={18} />
+                        Share
+                    </button>
                 </div>
 
                 {/* Facilities */}
