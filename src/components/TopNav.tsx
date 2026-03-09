@@ -11,7 +11,6 @@ export default function TopNav() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navItems = [
-        { href: '/', label: 'Home' },
         { href: '/mosques', label: 'Mosques' },
         { href: '/register', label: 'Add your mosque' },
         { href: '/admin', label: 'Admin Portal' },

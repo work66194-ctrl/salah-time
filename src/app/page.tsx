@@ -13,20 +13,31 @@ const LON = 81.8464;
 
 type PrayerRow = { name: string; start: string; end: string };
 
-async function fetchTimes(method: number, school: 0 | 1 = 0): Promise<PrayerRow[]> {
+type TimingsData = {
+  prayers: PrayerRow[];
+  hijriDate: string;
+};
+
+async function fetchTimes(method: number, school: 0 | 1 = 0): Promise<TimingsData> {
   const today = format(new Date(), 'dd-MM-yyyy');
-  const url = `https://api.aladhan.com/v1/timings/${today}?latitude=${LAT}&longitude=${LON}&method=${method}&school=${school}`;
+  // Pass an adjustment offset parameter (e.g. -1 days) to correctly calibrate the local Hijri date.
+  const url = `https://api.aladhan.com/v1/timings/${today}?latitude=${LAT}&longitude=${LON}&method=${method}&school=${school}&adjustment=-1`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Aladhan API error');
   const json = await res.json();
   const t = json.data.timings;
-  return [
-    { name: 'Fajr', start: t.Fajr, end: t.Sunrise },
-    { name: 'Dhuhr', start: t.Dhuhr, end: t.Asr },
-    { name: 'Asr', start: t.Asr, end: t.Maghrib },
-    { name: 'Maghrib', start: t.Maghrib, end: t.Isha },
-    { name: 'Isha', start: t.Isha, end: t.Midnight },
-  ];
+  const hijri = json.data.date.hijri;
+
+  return {
+    prayers: [
+      { name: 'Fajr', start: t.Fajr, end: t.Sunrise },
+      { name: 'Dhuhr', start: t.Dhuhr, end: t.Asr },
+      { name: 'Asr', start: t.Asr, end: t.Maghrib },
+      { name: 'Maghrib', start: t.Maghrib, end: t.Isha },
+      { name: 'Isha', start: t.Isha, end: t.Midnight },
+    ],
+    hijriDate: `${hijri.day} ${hijri.month.en} ${hijri.year}`
+  };
 }
 
 export default function Home() {
@@ -38,6 +49,7 @@ export default function Home() {
   const [standardTimes, setStandardTimes] = useState<PrayerRow[]>([]);
   const [hanafiTimes, setHanafiTimes] = useState<PrayerRow[]>([]);
   const [shiaTimes, setShiaTimes] = useState<PrayerRow[]>([]);
+  const [hijriDateStr, setHijriDateStr] = useState<string>('');
   const [school, setSchool] = useState<'standard' | 'hanafi' | 'shia'>('standard');
   const [loading, setLoading] = useState(true);
 
@@ -51,9 +63,10 @@ export default function Home() {
       fetchTimes(0, 0),   // Shia Ithna Ashari
     ])
       .then(([std, han, shia]) => {
-        setStandardTimes(std);
-        setHanafiTimes(han);
-        setShiaTimes(shia);
+        setStandardTimes(std.prayers);
+        setHanafiTimes(han.prayers);
+        setShiaTimes(shia.prayers);
+        setHijriDateStr(std.hijriDate);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -81,9 +94,6 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [cityTimes]);
 
-  if (!currentTime) {
-    return <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading...</div>;
-  }
 
   return (
     <main className={styles.homeContainer}>
@@ -94,7 +104,11 @@ export default function Home() {
           <MapPin size={24} color="var(--primary-color)" />
           Allahabad (Prayagraj)
         </h1>
-        <p className={styles.dateSubtitle}>{format(currentTime, 'EEEE, d MMMM yyyy')}</p>
+        <p className={styles.dateSubtitle}>
+          {currentTime
+            ? `${format(currentTime, 'EEEE, d MMMM yyyy')} ${hijriDateStr ? `• ${hijriDateStr}` : ''}`
+            : '\u00A0'}
+        </p>
       </header>
 
       {/* Hadith */}
@@ -109,17 +123,21 @@ export default function Home() {
         {/* Countdown Card */}
         <div className={styles.countdownCard}>
           {loading ? (
-            <div style={{ opacity: 0.8 }}>Loading Timetable...</div>
+            <div style={{ opacity: 0.5 }}>
+              <div className={styles.nextPrayerLabel}>Next Prayer: ...</div>
+              <div className={styles.countdownTimer}>--:--:--</div>
+              <div className={styles.upcomingTarget}>Target: ...</div>
+            </div>
           ) : cityTimes.length === 0 ? (
             <div style={{ opacity: 0.8 }}>No mosque data available yet. Please add data!</div>
           ) : (
             <>
-              <div className={styles.nextPrayerLabel}>Next Prayer: {nextPrayerName}</div>
+              <div className={styles.nextPrayerLabel}>Next Prayer: {nextPrayerName || '...'}</div>
               <div className={styles.countdownTimer}>
-                {formatTimeRemaining(timeLeft)}
+                {currentTime ? formatTimeRemaining(timeLeft) : '--:--:--'}
               </div>
               <div className={styles.upcomingTarget}>
-                Target: {nextPrayerTarget}
+                Target: {nextPrayerTarget || '...'}
               </div>
             </>
           )}
@@ -170,7 +188,17 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>
+            <>
+              {['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map((name) => (
+                <div key={name} className={styles.prayerRow} style={{ opacity: 0.5 }}>
+                  <span className={styles.prayerName}>{name}</span>
+                  <div className={styles.prayerTimes}>
+                    <span>--:--</span>
+                    <span>--:--</span>
+                  </div>
+                </div>
+              ))}
+            </>
           ) : cityTimes.length === 0 ? (
             <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-muted)' }}>Could not load timings. Check your connection.</div>
           ) : (
@@ -222,6 +250,29 @@ export default function Home() {
           Find Nearby Mosques
         </Link>
       </div>
+
+      {/* Informational Sections */}
+      <section className={styles.infoSection}>
+        <div className={styles.infoBlock}>
+          <h2 className={styles.infoTitle}>Core Services</h2>
+          <ul className={styles.infoList}>
+            <li><strong>Live Prayer Timings:</strong> Highly accurate Salah calculations for Allahabad, updated in real-time.</li>
+            <li><strong>Mosque Locator:</strong> Find nearby Masjids with their specific Jamat (Congregation) timings.</li>
+            <li><strong>One-Click Navigation:</strong> Open any mosque's location directly in Google Maps.</li>
+            <li><strong>Community Contributions:</strong> A free platform for anyone to add their local mosque and help others find it.</li>
+          </ul>
+        </div>
+
+        <div className={styles.infoBlock}>
+          <h2 className={styles.infoTitle}>Why Use Salah Time?</h2>
+          <ul className={styles.infoList}>
+            <li><strong>100% Free Forever:</strong> No subscriptions, no hidden costs, and no data collection.</li>
+            <li><strong>Zero Ads:</strong> A clean, distraction-free experience designed for worship and focus.</li>
+            <li><strong>Community Focused:</strong> Built by the community, for the community, as a Sadaqah Jariyah initiative.</li>
+            <li><strong>Always Accessible:</strong> Fast, lightweight, and mobile-friendly access to prayer times anywhere.</li>
+          </ul>
+        </div>
+      </section>
 
     </main>
   );

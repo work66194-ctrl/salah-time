@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Search, Map as MapIcon, List as ListIcon, MapPin, Droplets, Wind, ParkingCircle, Accessibility } from 'lucide-react';
+import { Search, Map as MapIcon, List as ListIcon, MapPin, Droplets, Wind, ParkingCircle, Accessibility, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getUpcomingPrayer, format12Hour } from '@/lib/utils';
 import styles from './page.module.css';
@@ -106,6 +106,11 @@ export default function MosqueDirectory() {
                             ];
                             const upcoming = getUpcomingPrayer(PRAYERS_ARR, new Date());
 
+                            const mapQuery = mosque.latitude && mosque.longitude
+                                ? `${mosque.latitude},${mosque.longitude}`
+                                : encodeURIComponent(`${mosque.name} ${mosque.area} Allahabad`);
+                            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
                             return (
                                 <div
                                     key={mosque.id}
@@ -123,6 +128,15 @@ export default function MosqueDirectory() {
                                             {mosque.facilities.has_parking && <span title="Parking"><ParkingCircle size={16} /></span>}
                                             {mosque.facilities.has_wheelchair_access && <span title="Chair Accessible"><Accessibility size={16} /></span>}
                                         </div>
+                                        <a
+                                            href={mapsUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={styles.mapLink}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <ExternalLink size={14} /> Open in Google Maps
+                                        </a>
                                     </div>
 
                                     {upcoming && (

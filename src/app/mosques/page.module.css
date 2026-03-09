@@ -112,6 +112,22 @@
     border-color: var(--primary-color-light);
 }
 
+.mapLink {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    width: fit-content;
+}
+
+.mapLink:hover {
+    text-decoration: underline;
+}
+
 .mosqueInfo {
     flex: 1;
 }

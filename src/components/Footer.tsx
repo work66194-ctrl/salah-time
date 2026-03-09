@@ -22,7 +22,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-bottom">
-                <p>Build by abdarrehmaan</p>
+                <p>Built by <a href="https://mine-vrpo.onrender.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>abdarrehmaan</a></p>
                 <p className="copyright">© {new Date().getFullYear()} Salah Time. All rights reserved.</p>
             </div>
         </footer>
