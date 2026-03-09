@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, LogOut, Clock, Layers, Calendar, ChevronDown, CheckCircle, AlertCircle, ClipboardList, Trash2, Check, X } from 'lucide-react';
+import { Save, LogOut, Clock, Layers, Calendar, ChevronDown, CheckCircle, AlertCircle, ClipboardList, Trash2, Check, X, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getPendingMosques, approveMosque, rejectMosque } from '@/app/actions/approveMosque';
 import { deleteMosque } from '@/app/actions/deleteMosque';
@@ -24,6 +24,12 @@ export default function AdminDashboard() {
     const [activeMosqueId, setActiveMosqueId] = useState<string>('');
     const [activeMosqueName, setActiveMosqueName] = useState<string>('');
     const [approvingId, setApprovingId] = useState<string | null>(null);
+
+    // Location State
+    const [area, setArea] = useState('');
+    const [address, setAddress] = useState('');
+    const [latitude, setLatitude] = useState('');
+    const [longitude, setLongitude] = useState('');
 
     // Form State
     const [prayers, setPrayers] = useState<any>({});
@@ -60,6 +66,9 @@ export default function AdminDashboard() {
                 id, 
                 name, 
                 area,
+                address,
+                latitude,
+                longitude,
                 prayers (*),
                 facilities (*)
             `)
@@ -89,6 +98,11 @@ export default function AdminDashboard() {
             setActiveMosqueId(id);
             setActiveMosqueName(`${m.name} (${m.area})`);
 
+            setArea(m.area || '');
+            setAddress(m.address || '');
+            setLatitude(m.latitude || '');
+            setLongitude(m.longitude || '');
+
             const p = Array.isArray(m.prayers) ? m.prayers[0] || {} : m.prayers || {};
             const f = Array.isArray(m.facilities) ? m.facilities[0] || {} : m.facilities || {};
 
@@ -117,6 +131,16 @@ export default function AdminDashboard() {
         setSaving(true);
         setStatusMsg(null);
 
+        const { error: mError } = await supabase
+            .from('mosques')
+            .update({
+                area,
+                address,
+                latitude: latitude ? parseFloat(latitude) : null,
+                longitude: longitude ? parseFloat(longitude) : null
+            })
+            .eq('id', activeMosqueId);
+
         const { error: pError } = await supabase
             .from('prayers')
             .update(prayers)
@@ -129,9 +153,9 @@ export default function AdminDashboard() {
 
         setSaving(false);
 
-        if (pError || fError) {
+        if (pError || fError || mError) {
             setStatusMsg({ type: 'error', text: `Failed to save: RLS Policy Error. You need to enable UPDATE policies in Supabase.` });
-            console.error(pError || fError);
+            console.error(pError || fError || mError);
         } else {
             setStatusMsg({ type: 'success', text: 'Changes saved successfully!' });
             setTimeout(() => setStatusMsg(null), 3000);
@@ -323,6 +347,33 @@ export default function AdminDashboard() {
                                 <ChevronDown size={16} color="var(--text-muted)" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                             </div>
                         </div>
+
+                        {/* Location Details Section */}
+                        <section className={styles.section} style={{ marginBottom: '32px' }}>
+                            <h2 className={styles.sectionTitle} style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: 'var(--text-primary)' }}>
+                                <MapPin size={20} color="var(--primary-color)" /> Location Details
+                            </h2>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px', color: 'var(--text-secondary)' }}>Area / Neighborhood</label>
+                                    <input type="text" value={area} onChange={(e) => setArea(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)', color: 'var(--text-primary)' }} />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px', color: 'var(--text-secondary)' }}>Full Address</label>
+                                    <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={2} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)', resize: 'vertical', color: 'var(--text-primary)' }} />
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px', color: 'var(--text-secondary)' }}>Latitude</label>
+                                        <input type="number" step="any" value={latitude} onChange={(e) => setLatitude(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)', color: 'var(--text-primary)' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '6px', color: 'var(--text-secondary)' }}>Longitude</label>
+                                        <input type="number" step="any" value={longitude} onChange={(e) => setLongitude(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-color)', color: 'var(--text-primary)' }} />
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
                         {/* Daily Prayers Section */}
                         <section className={styles.section}>
